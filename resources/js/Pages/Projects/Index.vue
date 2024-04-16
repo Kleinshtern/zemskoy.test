@@ -1,7 +1,9 @@
 <script setup>
     import { Head } from "@inertiajs/vue3";
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-    import VTable from "@/Components/VTable.vue";
+    import PrimaryButton from "@/Components/PrimaryButton.vue";
+    import { PlusIcon } from '@heroicons/vue/24/outline';
+    import VCard from "@/Components/VCard.vue";
 
     const props = defineProps({
         projects: {
@@ -9,14 +11,6 @@
             required: true
         }
     });
-
-    const headers = [
-        { key: 'id', title: 'ID' },
-        { key: 'title', title: 'Название' },
-        { key: 'description', title: 'Описание' },
-        { key: 'creator', title: 'Создатель' },
-        { key: 'created_at', title: 'Дата создания' }
-    ]
 </script>
 
 <template>
@@ -24,21 +18,33 @@
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Список проектов</h2>
+            <div class="flex justify-between items-center">
+                <h2 class="font-semibold text-xl text-gray-800">Список проектов</h2>
+                <primary-button
+                    :prepend-icon="PlusIcon"
+                    :href="route('projects.create')"
+                >
+                    Добавить проект
+                </primary-button>
+            </div>
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <v-table
-                        item-key="id"
-                        :items="projects"
-                        :headers="headers"
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <v-card
+                        v-for="project in projects"
+                        :key="project.id"
+                        :title="`№${project.id} - ${project.title}`"
+                        :background-image="project.img"
+                        :link="route('projects.show', project.id)"
                     >
-                        <template #item.creator="{ raw }">
-                            {{ raw.name }} ({{ raw.email }})
+                        <template #body>
+                            <p>{{ project.description }}</p>
+                            <p>Создатель: {{ project.creator.name }} ({{ project.creator.email }})</p>
+                            <p>Дата создания: {{ project.created_at }}</p>
                         </template>
-                    </v-table>
+                    </v-card>
                 </div>
             </div>
         </div>

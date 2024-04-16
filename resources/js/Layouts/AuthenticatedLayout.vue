@@ -6,19 +6,22 @@
     import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
     import { Link } from '@inertiajs/vue3';
 
+    import { RectangleGroupIcon, FolderIcon, UserIcon } from '@heroicons/vue/24/outline';
+    import VIcon from "@/Components/VIcon.vue";
+
     const showingNavigationDropdown = ref(false);
 
     const topMenu = [
-        { title: 'Главная', route: route('dashboard'), active: route().current('dashboard') },
-        { title: 'Проекты', route: route('projects.index'), active: route().current('projects.index') },
-        { title: 'Пользователи', route: route('users.index'), active: route().current('users.index') }
+        { title: 'Главная', route: route('dashboard'), active: route().current('dashboard'), icon: RectangleGroupIcon },
+        { title: 'Проекты', route: route('projects.index'), active: (route().current('projects.index') || route().current('projects.show')),  icon: FolderIcon },
+        { title: 'Пользователи', route: route('users.index'), active: route().current('users.index'), icon: UserIcon }
     ];
 </script>
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+        <div class="min-h-screen bg-[#e5ecfb]">
+            <nav>
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
@@ -28,13 +31,17 @@
                                 </Link>
                             </div>
 
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-3 sm:-my-px sm:ms-10 sm:flex sm:items-center">
                                 <NavLink
                                     v-for="(link, key) in topMenu"
                                     :key="key"
                                     :href="link.route"
                                     :active="link.active"
                                     >
+                                    <v-icon
+                                        v-if="link.icon"
+                                        :icon-component="link.icon"
+                                    ></v-icon>
                                     {{ link.title }}
                                 </NavLink>
                             </div>
@@ -48,7 +55,7 @@
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -141,15 +148,14 @@
                 </div>
             </nav>
 
-            <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
+            <header class="bg-white border-b shadow-md rounded-t-lg" v-if="$slots.header">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <slot name="breadcrumbs" />
                     <slot name="header" />
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main>
+            <main class="bg-white min-h-[85.5vh]">
                 <slot />
             </main>
         </div>

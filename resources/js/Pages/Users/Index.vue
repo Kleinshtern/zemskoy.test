@@ -29,12 +29,16 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="overflow-hidden shadow-sm sm:rounded-lg">
                     <v-table
                         item-key="id"
                         :items="users"
                         :headers="headers"
-                    ></v-table>
+                    >
+                        <template #item.name="{ raw }">
+                            <b>{{ raw }}</b>
+                        </template>
+                    </v-table>
                 </div>
             </div>
         </div>

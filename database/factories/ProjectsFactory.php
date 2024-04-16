@@ -21,8 +21,8 @@ class ProjectsFactory extends Factory
         return [
             'title' => Str::random(10),
             'description' => Str::random(24),
-            'img' => public_path('/img/bg-projects.jpeg'),
-            'creator_id' => User::all()->random(1)->first()
+            'img' => '/img/bg-projects.jpeg',
+            'creator_id' => User::orderByRaw('RAND()')->first()->id
         ];
     }
 }
