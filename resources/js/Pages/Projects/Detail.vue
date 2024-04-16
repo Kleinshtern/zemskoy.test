@@ -89,7 +89,7 @@
                 <span class="flex space-x-[-15px]">
                     <v-avatar
                         v-for="(member, key) in project.members"
-                        class="border-2 border-white" :class="`z-[${project.members.length - 1}]`"
+                        class="border-2 border-white" :class="`z-[${project.members.length - key}]`"
                         :avatar-url="member.avatar_image"
                         :tooltip-title="`${member.user.name} (${member.user.email})`"
                     ></v-avatar>
