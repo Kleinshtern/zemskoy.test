@@ -5,6 +5,8 @@
     import VList from "@/Components/VList.vue";
     import VListItem from "@/Components/VListItem.vue";
 
+    import { OnClickOutside } from "@vueuse/components";
+
     const props = defineProps({
         modelValue: {
             type: [Array, String, Number],
@@ -22,10 +24,6 @@
             type: String,
             required: true
         },
-        id: {
-            type: String,
-            default: ''
-        },
         items: {
             type: Array,
             required: true
@@ -40,44 +38,66 @@
         }
     });
 
-
 </script>
 
 <template>
-    <div
-        class="select__input relative"
-        aria-expanded="false" :aria-controls="`select__items-${name}`"
-    >
+    <onClickOutside @trigger="show = false">
         <div
-            class="select__input-overlay border border-gray-200 rounded-t-md px-4 py-2 flex items-center justify-between gap-2 cursor-pointer hover:border-gray-400"
-            @click="show = !show"
+            class="select__input relative"
+            :aria-expanded="show" :aria-controls="`select__items-${name}`"
         >
-            {{ placeholder }}
+            <div
+                class="select__input-overlay border border-gray-200 rounded-t-md px-2 py-2 flex items-center justify-between gap-2 cursor-pointer hover:border-gray-400"
+                :class="`${ show ? 'active' : '' }`"
+                @click="show = !show"
+            >
+                <template v-if="typeof modelValue === Array.prototype">
+                    is array
+                </template>
+                <template v-else-if="modelValue !== null">
+                    <section v-if="items.length > 0">
+                        {{ items.find(item => item[itemValue] === modelValue)[itemLabel] }}
+                    </section>
+                </template>
+                <template v-else>
+                    {{ placeholder }}
+                </template>
 
             <Transition>
                 <v-icon :icon-component="show ? ChevronUpIcon : ChevronDownIcon" with-out-margin />
             </Transition>
         </div>
 
-        <v-list
-            v-if="show"
-            role="listbox"
-            :id="`select__items-${name}`"
-            class="absolute top-[100%] left-0 bg-white w-full z-[9999] border-x border-b border-t-0 rounded-md"
-            hover
-        >
-            <v-list-item
-                role="option"
-                v-for="item in items"
-                :value="item[itemValue]"
-                :key="item[itemValue]"
-                class="bg-white border-b-0"
+            <Transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="opacity-0 scale-95"
+                enter-to-class="opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="opacity-100 scale-100"
+                leave-to-class="opacity-0 scale-95"
             >
-                {{ item[itemLabel] }}
-            </v-list-item>
-        </v-list>
-    </div>
+                <v-list
+                    v-if="show"
+                    role="listbox"
+                    :id="`select__items-${name}`"
+                    class="absolute top-[100%] left-0 bg-white w-full z-[9999] border-x border-b border-t-0"
+                    hover
+                >
+                    <v-list-item
+                        role="option"
+                        v-for="item in items"
+                        :value="item[itemValue]"
+                        :key="item[itemValue]"
+                        class="bg-white border-b-0"
+                        @click="selectValue(item[itemValue])"
 
+                    >
+                        {{ item[itemLabel] }}
+                    </v-list-item>
+                </v-list>
+            </Transition>
+        </div>
+    </onClickOutside>
 </template>
 
 <script>
@@ -86,6 +106,26 @@
             return {
                 show: false
             }
+        },
+        emits: [
+            'update:modelValue'
+        ],
+        methods: {
+            selectValue: function (value) {
+                this.$emit('update:modelValue', value);
+                this.show = !this.show;
+            }
         }
     }
 </script>
+
+<style scoped>
+    .select__input {
+        .select__input-overlay {
+            &.active {
+                --tw-border-opacity: 1;
+                border-color: rgb(156 163 175 / var(--tw-border-opacity))
+            }
+        }
+    }
+</style>

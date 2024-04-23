@@ -12,7 +12,7 @@
 </script>
 
 <template>
-    <ul class="list__items list-none rounded-t-sm"
+    <ul class="list__items list-none"
         :class="hover ? 'list__hover' : ''">
 
         <li

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <li class="list__item flex items-center gap-4 border-b w-full min-h-[54px] px-2 py-2 transition duration-200">
+    <li class="list__item flex items-center gap-4 border-b w-full min-h-[54px] px-2 py-2 transition duration-200 bg-transparent">
         <slot />
     </li>
 </template>

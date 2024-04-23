@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProjectMembers\UpdateTypeMemberRequest;
 use App\Models\ProjectMembers;
 use App\Models\Projects;
 use Illuminate\Http\JsonResponse;

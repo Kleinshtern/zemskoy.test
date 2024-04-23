@@ -17,13 +17,17 @@
        bodyClasses: {
            type: String,
            required: false,
+       },
+       loading: {
+          type: Boolean,
+          required: false
        }
     });
 </script>
 
 <template>
     <div
-        class="modal__window fixed top-0 left-0 w-full h-full"
+        class="modal__window z-[9999] fixed top-0 left-0 w-full h-full"
         :class="`${ modelValue ? 'shown' : 'not__shown' }`"
     >
         <div
@@ -54,7 +58,12 @@
             <v-divider class="bg-gray-300" />
 
             <div class="modal__window_content px-4 py-2 w-full">
-                <slot />
+                <template v-if="loading">
+                    Loading...
+                </template>
+                <template v-else>
+                    <slot />
+                </template>
             </div>
         </div>
     </div>
@@ -75,10 +84,12 @@
 <style scoped lang="scss">
     .modal__window {
         &.shown {
-            display: block;
+            opacity: 1;
+            z-index: 9999;
         }
         &.not__shown {
-            display: none;
+            opacity: 0;
+            z-index: -1;
         }
     }
 </style>

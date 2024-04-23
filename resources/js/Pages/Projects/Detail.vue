@@ -11,6 +11,7 @@
     import VList from "@/Components/VList.vue";
     import VListItem from "@/Components/VListItem.vue";
     import VSelect from "@/Components/VSelect.vue";
+    import Members from "@/Pages/Projects/Blocks/Members.vue";
 
     const props = defineProps({
         project: {
@@ -87,29 +88,11 @@
                 </span>
             </div>
         </div>
-        <div class="py-3">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex items-center gap-2">
-                Участники:
-                <span class="flex space-x-[-15px]">
-                    <v-avatar
-                        v-for="(member, key) in project.members"
-                        class="border-2 border-white" :class="`z-[${project.members.length - key}]`"
-                        :avatar-url="member.avatar_image"
-                        :tooltip-title="`${member.user.name} (${member.user.email})`"
-                    ></v-avatar>
-                    <button
-                        class="w-[40px] h-[40px] border-2 border-dashed border-gray-200 text-gray-200 rounded-full bg-white hover:border-gray-400 hover:text-gray-400 transition flex items-center justify-center"
-                        type="button"
-                        @click="addMembersModal = true"
-                    >
-                        <v-icon
-                            :icon-component="PlusIcon"
-                            with-out-margin
-                        />
-                    </button>
-                </span>
-            </div>
-        </div>
+
+        <members
+            :items="project.members"
+            @updateProjectMembers="updateMembersList"
+        />
 
         <div class="py-3">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -127,50 +110,7 @@
             </div>
         </div>
 
-        <v-modal
-            v-model="addMembersModal"
-            title="Добавление участника"
-            body-classes="max-w-[650px]"
-        >
-            <v-list
-                :title="`${ project.members.length } ${ 'участник' + (project.members.length > 1 && project.members.length < 5 ? 'а' : (project.members.length > 5 ? 'ов' : ''))  }`"
-            >
-                <v-list-item
-                    v-for="member in project.members"
-                    class="border-b-0 justify-between"
-                >
-                    <div class="main-info flex items-center gap-3">
-                        <v-avatar
-                            class="w-[50px] h-[50px]"
-                            :avatar-url="member.avatar_image"
-                        ></v-avatar>
-                        <p>
-                        <span class="font-semibold">
-                            {{ member.user.name }}
-                        </span>
-                            <br>
-                            <span class="text-sm text-gray-300">
-                            {{ member.user.email }}
-                        </span>
-                        </p>
-                    </div>
-                    <div class="control-block flex items-center justify-end space-x-3">
-                        <v-select
-                            item-label="label"
-                            item-value="value"
-                            :items="typesMembers"
-                            name="typesMember"
-                            :model-value="member.member_type"
-                        ></v-select>
 
-                        <button type="button" class="text-[#ef4444]">
-                            <v-icon :icon-component="XCircleIcon" class="h-6 w-6" />
-                        </button>
-
-                    </div>
-                </v-list-item>
-            </v-list>
-        </v-modal>
 
     </AuthenticatedLayout>
 </template>
@@ -178,26 +118,13 @@
 <script>
     export default {
         data: () => {
-            return {
-                addMembersModal: false,
-                typesMembers: []
-            }
+            return {}
         },
         methods: {
-            fetchMembers(url) {
-                this.$inertia.reload();
-
-                axios.get(url)
-                    .then(response => {
-                        /** обновляем Inertia, чтобы получить возможно новых участников */
-                        this.typesMembers = response.data.types;
-                    })
-            }
-        },
-        watch: {
-            addMembersModal: function (val) {
-                if(val) {
-                    this.fetchMembers(route('api.projects.loadTypesMember'))
+            updateMembersList: function (values) {
+                let idx = this.project.members.findIndex(member => member.id === values.id);
+                if(idx !== -1) {
+                    this.project.members[idx] = values.data;
                 }
             }
         }
