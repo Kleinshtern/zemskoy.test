@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignMemberRequest;
 use App\Http\Requests\ProjectMembers\UpdateTypeMemberRequest;
 use App\Models\ProjectMembers;
-use App\Models\User;
+use App\Models\Projects;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ProjectMembersController extends Controller
 {
-    public function updateTypeMember(UpdateTypeMemberRequest $updateTypeMemberRequest, ProjectMembers $member): JsonResponse
+    public function updateTypeMember(UpdateTypeMemberRequest $updateTypeMemberRequest, Projects $project , ProjectMembers $member): JsonResponse
     {
         $validated = $updateTypeMemberRequest->validated();
 
@@ -23,12 +23,19 @@ class ProjectMembersController extends Controller
         ]);
     }
 
-    public function assignMember(User $user)
+    public function assignMember(AssignMemberRequest $assignMemberRequest, Projects $project)
     {
+        $validated = $assignMemberRequest->validated();
 
+        $member = ProjectMembers::createMember($validated, $project);
+
+        return response()->json([
+            'message' => 'Member success assigned',
+            'member' => $member
+        ]);
     }
 
-    public function excludeMember(ProjectMembers $member): JsonResponse
+    public function excludeMember(Projects $project, ProjectMembers $member): JsonResponse
     {
         $member->delete();
 

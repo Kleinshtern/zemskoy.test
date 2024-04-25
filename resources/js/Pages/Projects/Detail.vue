@@ -4,13 +4,9 @@
     import VBreadcrumbs from "@/Components/VBreadcrumbs.vue";
     import { Link } from '@inertiajs/vue3';
     import VIcon from "@/Components/VIcon.vue";
-    import {PencilIcon, XMarkIcon, HeartIcon, PlusIcon, XCircleIcon} from "@heroicons/vue/24/outline";
+    import {PencilIcon, XMarkIcon, HeartIcon} from "@heroicons/vue/24/outline";
     import VTasksList from "@/Components/VTasksList.vue";
     import VAvatar from "@/Components/VAvatar.vue";
-    import VModal from "@/Components/VModal.vue";
-    import VList from "@/Components/VList.vue";
-    import VListItem from "@/Components/VListItem.vue";
-    import VSelect from "@/Components/VSelect.vue";
     import Members from "@/Pages/Projects/Blocks/Members.vue";
 
     const props = defineProps({
@@ -91,7 +87,10 @@
 
         <members
             :items="project.members"
+            :project_id="project.id"
             @updateProjectMembers="updateMembersList"
+            @assignMember="addNewMemberToList"
+            @excludeMember="removeMemberFromList"
         />
 
         <div class="py-3">
@@ -99,13 +98,21 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <v-tasks-list
                         title-list="Список задач"
-                        :tasks="todoTasks"></v-tasks-list>
+                        :tasks="todoTasks"
+                        :project-id="project.id"
+                    ></v-tasks-list>
                     <v-tasks-list
                         title-list="В работе"
-                        :tasks="inProgressTasks"></v-tasks-list>
+                        :tasks="inProgressTasks"
+                        :project-id="project.id"
+                        hide-default-footer
+                    ></v-tasks-list>
                     <v-tasks-list
                         title-list="Завершены"
-                        :tasks="doneTasks"></v-tasks-list>
+                        :tasks="doneTasks"
+                        :project-id="project.id"
+                        hide-default-footer
+                    ></v-tasks-list>
                 </div>
             </div>
         </div>
@@ -125,6 +132,15 @@
                 let idx = this.project.members.findIndex(member => member.id === values.id);
                 if(idx !== -1) {
                     this.project.members[idx] = values.data;
+                }
+            },
+            addNewMemberToList: function (value) {
+                this.project.members.push(value);
+            },
+            removeMemberFromList: function (id) {
+                let idx = this.project.members.findIndex(member => member.id === id);
+                if(idx !== -1) {
+                    this.project.members.splice(idx, 1);
                 }
             }
         }

@@ -12,13 +12,17 @@
         items: {
             type: Array,
             required: true
+        },
+        project_id: {
+            type: Number,
+            required: true
         }
     });
 
     defineEmits([
        'updateProjectMembers',
-        'excludeMember',
-        'assignMember'
+       'excludeMember',
+       'assignMember'
     ]);
 
 </script>
@@ -144,7 +148,9 @@
             changeTypeMember(id, type) {
                 this.loading = true;
 
-                axios.patch(route('projects.member.changeType', {                    member: id,
+                axios.patch(route('projects.member.changeType', {
+                    member: id,
+                    project: this.project_id,
                     member_type: type
                 }))
                     .then(response => {
@@ -161,13 +167,19 @@
                         })
             }, 500),
             excludeMember: function (id) {
-                axios.delete(route('projects.member.exclude', id))
+                axios.delete(route('projects.member.exclude', {
+                    member: id,
+                    project: this.project_id,
+                }))
                     .then(() => {
                         this.$emit('excludeMember', id);
                     });
             },
             assignMember: function (user_id) {
-                axios.post(route('projects.member.assign', user_id))
+                let formData = new FormData();
+                formData.append('user_id', user_id);
+
+                axios.post(route('projects.member.assign', this.project_id), formData)
                     .then(response => {
                         this.$emit('assignMember', response.data.member);
                     });

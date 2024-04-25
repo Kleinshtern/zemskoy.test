@@ -81,4 +81,16 @@ class ProjectMembers extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    public static function createMember($values, $project)
+    {
+        $member = self::create([
+            'project_id' => $project->id,
+            'user_id' => $values['user_id'],
+            'member_type' => ProjectMembers::TYPE_EXECUTOR,
+        ]);
+        $member->load('user');
+
+        return $member;
+    }
 }

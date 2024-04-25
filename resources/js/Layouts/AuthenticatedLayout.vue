@@ -13,7 +13,7 @@
 
     const topMenu = [
         { title: 'Главная', route: route('dashboard'), active: route().current('dashboard'), icon: RectangleGroupIcon },
-        { title: 'Проекты', route: route('projects.index'), active: (route().current('projects.index') || route().current('projects.show')),  icon: FolderIcon },
+        { title: 'Проекты', route: route('projects.index'), active: (route().current('projects.index') || route().current('projects.show') || route().current('projects.task.index')),  icon: FolderIcon },
         { title: 'Пользователи', route: route('users.index'), active: route().current('users.index'), icon: UserIcon }
     ];
 </script>

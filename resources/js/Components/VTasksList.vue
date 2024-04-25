@@ -6,6 +6,10 @@
     import VAvatar from "@/Components/VAvatar.vue";
 
     const props = defineProps({
+        projectId: {
+            type: Number,
+            required: true,
+        },
         titleList: {
             type: String,
             required: false,
@@ -15,6 +19,10 @@
             type: Array,
             required: false,
             default: []
+        },
+        hideDefaultFooter: {
+            type: Boolean,
+            default: false
         }
     })
 </script>
@@ -26,8 +34,9 @@
         </div>
         <div class="flex flex-col items-center space-y-2">
             <div
-                class="w-[90%] border border-gray-200 rounded-lg bg-white px-2 py-3 shadow"
-                 v-for="task in tasks" :key="task.id"
+                class="w-[90%] border border-gray-200 rounded-lg bg-white px-2 py-3 shadow hover:scale-105 cursor-pointer transition"
+                v-for="task in tasks" :key="task.id"
+                @click="$inertia.get(route('projects.task.index', { project: projectId, task: task.id }))"
             >
                 <p class="font-semibold text-[#050042]">{{ task.title }}</p>
 
@@ -53,14 +62,20 @@
                     {{ task.created_at }}
                 </span>
             </div>
-            <button
-                type="button"
-                class="w-[90%] border border-gray-200 bg-[#eeeef0] rounded-lg px-2 py-3 font-semibold flex justify-center items-center gap-2 hover:bg-[#dcdcdc] transition"
 
+            <footer
+                class="w-[90%]"
+                v-if="!hideDefaultFooter"
             >
-                <v-icon :icon-component="PlusIcon" with-out-margin />
-                Добавить задачу
-            </button>
+                <button
+                    type="button"
+                    class="w-[100%] border border-gray-200 bg-[#eeeef0] rounded-lg px-2 py-3 font-semibold flex justify-center items-center gap-2 hover:bg-[#dcdcdc] transition"
+
+                >
+                    <v-icon :icon-component="PlusIcon" with-out-margin />
+                    Создать задачу
+                </button>
+            </footer>
         </div>
     </div>
 </template>
